@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+  <HEAD>
+    <TITLE>Object Sort</TITLE>
+  </HEAD>
+  <BODY>
+  <h2>Overview</h2>
+    This provides a sort function for java objects. The objects to be sorted can either be serialized 
+    onto a file or provided by an input callback interface. The sorted objects will be either serialized
+    onto a file or optionally presented to an output callback routine.
+    <p>
+    The sort order is determined by a caller provided Comparator.
+    <p>
+    The sort will be performed internally given sufficient memory or through a merge of work files.
+    <p>
+    The objects being sorted must implement java.io.Serializable.
+    <h2>Examples</h2>
+    <p>Full working examples are provided in the Samples folder</p>
+    <h3>Input file to output file</h3>
+    <pre class="prettyprint">
+    ObjectSort&lt;SomeClass&gt; sort = new ObjectSort&lt;SomeClass&gt;();
+    sort.sort(infileName,outfileName, comparator,tempDirName);
+    </pre>
+    <h3>Input file to output callback</h3>
+    <pre class="prettyprint">
+    SortOutCallback&lt;SomeClass&gt; outCallback = new SortOutCallback&lt;SomeClass&gt;() {
+    
+			public void consumeSortOut(SomeClass sortObj)
+			{
+				// process next sorted SomeClass instance
+				
+			}} ;
+			
+ 	ObjectSort&lt;SomeClass&gt; sort = new ObjectSort&lt;SomeClass&gt;();
+  	sort.sort(infileName,outCallback, comparator,tempDirName);
+    </pre>
+    <h3>Input callback to output file</h3>
+     <pre class="prettyprint">
+    SortInCallback&lt;SomeClass&gt; inCallback = new SortInCallback&lt;SomeClass&gt;() {
+
+			public SomeClass produceSortIn()
+			{
+			if(someCondition())
+			{
+				SomeClass nextData = new SomeClass();
+				return nextData ;
+			}
+			else return null ;
+			}} ;
+ 	
+			
+ 	ObjectSort&lt;SomeClass&gt; sort = new ObjectSort&lt;SomeClass&gt;();
+  	sort.sort(inCallback, outfileName,comparator,tempDirName);
+  </pre>
+    <h3>Input callback to output callback</h3>
+     <pre class="prettyprint">
+    SortInCallback&lt;SomeClass&gt; inCallback = new SortInCallback&lt;SomeClass&gt;() {
+
+			public SomeClass produceSortIn()
+			{
+			if(someCondition())
+			{
+				SomeClass nextData = new SomeClass();
+				return nextData ;
+			}
+			else return null ;
+			}} ;
+ 	
+			SortOutCallback&lt;SomeClass&gt; outCallback = new SortOutCallback&lt;SomeClass&gt;() {
+
+				public void consumeSortOut(SomeClass sortObj)
+				{
+					// process next sorted SomeClass instance
+					
+				}} ;
+			
+ 	ObjectSort&lt;SomeClass&gt; sort = new ObjectSort&lt;SomeClass&gt;();
+  	sort.sort(inCallback, outCallback,comparator,tempDirName);
+  </pre>
+    <h2>Caution</h2>
+    <p>Using ObjectInputStream/ObjectOutputStream to read/write large numbers of objects can impact 
+    your application's memory usage. Please consider using:
+    <ul>
+    <li>the readUnshared and writeUnshared methods</li>
+    <li>the reset method on the output stream </li>
+    </ul>
+  </BODY>
+</HTML>

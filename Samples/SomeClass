@@ -1,0 +1,53 @@
+import java.io.Serializable;
+import java.util.Random;
+
+public class SomeClass implements
+																							Serializable
+{
+
+	private static final long	serialVersionUID	= -4167994023534373292L;
+	private int															i1;
+	private int															i2;
+	private int															i3;
+	private long														l1;
+	private long														l2;
+	private long														l3;
+
+	public SomeClass()
+	{
+
+	}
+
+	public void randomise(Random rand)
+	{
+		i1	= rand.nextInt(100);
+		i2	= rand.nextInt(100);
+		i3	= rand.nextInt(100);
+		l1	= i1;
+		l2	= i2;
+		l3	= i3;
+
+	}
+
+	public int getI1()
+	{
+		return i1;
+	}
+
+	public int getI2()
+	{
+		return i2;
+	}
+
+	public int getI3()
+	{
+		return i3;
+	}
+
+	@Override
+	public String toString()
+	{
+		return "Dummy [i1=" + i1 + ", i2=" + i2 + ", i3=" + i3 + ", l1=" + l1 + ", l2=" + l2 + ", l3=" + l3 + "]";
+	}
+
+}

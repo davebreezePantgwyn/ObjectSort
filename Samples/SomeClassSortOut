@@ -1,0 +1,14 @@
+import com.pantgwyn.objectsort.SortOutCallback;
+
+public class SomeClassSortOut implements
+																														SortOutCallback<SomeClass>
+{
+
+	@Override
+	public void consumeSortOut(
+																												SomeClass sortObj)
+	{
+
+	}
+
+}

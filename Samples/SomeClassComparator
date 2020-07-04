@@ -1,0 +1,17 @@
+import java.util.Comparator;
+
+public class SomeClassComparator implements Comparator<SomeClass>
+{
+
+	@Override
+	public int compare(SomeClass arg0, SomeClass arg1)
+	{
+		
+		
+		int i0 = arg0.getI1() ;
+		int i1 = arg1.getI1() ;
+		
+		return i0-i1 ; 
+	}
+
+}
