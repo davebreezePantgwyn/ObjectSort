@@ -382,7 +382,7 @@ public abstract class Sort<T>
 				createWorkFile(objQueue, workFileList, tempDir, comparator);
 				if (workFileList.size() >= MAX_WORK_FILES)
 				{
-					FileWrapper<T> mergeTarget = getNetWorkFile(tempDir);
+					FileWrapper<T> mergeTarget = getNextWorkFile(tempDir);
 					merge(mergeTarget, workFileList, comparator);
 					workFileList.add(mergeTarget);
 				}
@@ -515,7 +515,7 @@ public abstract class Sort<T>
 																Comparator<T> comparator) throws IOException
 	{
 
-		FileWrapper<T> workFile = getNetWorkFile(tempDir);
+		FileWrapper<T> workFile = getNextWorkFile(tempDir);
 		workFileList.add(workFile);
 		workFile.startOutStream();
 		workFile.pushData(objQueue, comparator);
@@ -523,7 +523,7 @@ public abstract class Sort<T>
 
 	}
 
-	protected FileWrapper<T> getNetWorkFile(String tempDir)
+	protected FileWrapper<T> getNextWorkFile(String tempDir)
 	{
 		String name = "sortWork" + workFileId;
 		workFileId++;

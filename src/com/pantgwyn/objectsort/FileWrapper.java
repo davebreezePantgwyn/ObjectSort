@@ -15,6 +15,12 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Spliterator;
+import java.util.function.Consumer;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.csv.CSVRecord;
 
 /**
  * A encapsulation of the work files used by ObjectSort.
@@ -29,18 +35,22 @@ import java.util.List;
  */
 public class FileWrapper<T>
 {
-	private static final int		BUFF_SIZE					= 8 * 1024;
-	private String							fileName;
-	private InputStream					inStream					= null;
-	private OutputStream				outStream					= null;
-	private T										currentInputItem	= null;
-	private BufferedReader			bufferedReader		= null;
-	private BufferedWriter			bufferedWriter		= null;
-	private Type								type;
-	private Destination					outDestination;
-	private Destination					inSource;
-	private SortInCallback<T>		inCallback				= null;
-	private SortOutCallback<T>	outCallback				= null;
+
+	private static final int				BUFF_SIZE					= 8 * 1024;
+
+	private String									fileName;
+	private InputStream							inStream					= null;
+	private OutputStream						outStream					= null;
+	private T												currentInputItem	= null;
+	private BufferedReader					bufferedReader		= null;
+	private BufferedWriter					bufferedWriter		= null;
+	private Type										type;
+	private Destination							outDestination;
+	private Destination							inSource;
+	private SortInCallback<T>				inCallback				= null;
+	private SortOutCallback<T>			outCallback				= null;
+	private CSVPrinter							csvPrinter				= null;
+	private Spliterator<CSVRecord>	csvIterator				= null;
 
 	/**
 	 * Constructor for FileWrapper
@@ -84,7 +94,7 @@ public class FileWrapper<T>
 
 	private FileWrapper(Type type, String fileName, SortInCallback<T> inCallback, SortOutCallback<T> outCallback)
 	{
-		
+
 		this.fileName			= fileName;
 		this.type					= type;
 		this.inCallback		= inCallback;
@@ -155,7 +165,11 @@ public class FileWrapper<T>
 					break;
 				case TEXT:
 					bufferedReader = new BufferedReader(new InputStreamReader(inFileStream));
-
+					break;
+				case CSV:
+					bufferedReader = new BufferedReader(new InputStreamReader(inFileStream));
+					CSVParser parser = new CSVParser(bufferedReader, CSVFormat.DEFAULT);
+					csvIterator = parser.spliterator();
 					break;
 				default:
 					break;
@@ -191,6 +205,9 @@ public class FileWrapper<T>
 			case TEXT:
 				bufferedWriter = new BufferedWriter(new OutputStreamWriter(outFileStream, Charset.defaultCharset()), BUFF_SIZE);
 				break;
+			case CSV:
+				bufferedWriter = new BufferedWriter(new OutputStreamWriter(outFileStream, Charset.defaultCharset()), BUFF_SIZE);
+				csvPrinter = new CSVPrinter(new BufferedWriter(bufferedWriter), CSVFormat.DEFAULT);
 			default:
 				break;
 		}
@@ -209,16 +226,31 @@ public class FileWrapper<T>
 		{
 			case FILE:
 
-				if (outStream != null)
+				switch (type)
 				{
-					outStream.flush();
-					Sort.close(outStream);
-				} else
-				{
-					bufferedWriter.flush();
-					Sort.close(bufferedWriter);
+					case CSV:
+						if (csvPrinter != null)
+						{
+							csvPrinter.flush();
+							Sort.close(csvPrinter);
+						}
+						break;
+					default:
+						if (outStream != null)
+						{
+							outStream.flush();
+							Sort.close(outStream);
+						} else
+						{
+							bufferedWriter.flush();
+							Sort.close(bufferedWriter);
+						}
+						break;
 				}
 
+				break;
+			case CALLBACK:
+				outCallback.consumeSortOut(null);
 				break;
 			default:
 				break;
@@ -263,6 +295,11 @@ public class FileWrapper<T>
 						case TEXT:
 							currentInputItem = (T) bufferedReader.readLine();
 							break;
+						case CSV:
+							Consumer<? super CSVRecord> action = a -> currentInputItem = (T) a;
+							if (!csvIterator.tryAdvance(action))
+								currentInputItem = null;
+							break;
 						default:
 							break;
 					}
@@ -300,9 +337,9 @@ public class FileWrapper<T>
 	public enum Type
 	{
 		OBJECT,
+		CSV,
 		TEXT;
 	}
-
 
 	private enum Destination
 	{
@@ -327,6 +364,10 @@ public class FileWrapper<T>
 						String s = (String) o;
 						bufferedWriter.write(s);
 						bufferedWriter.newLine();
+						break;
+					case CSV:
+						CSVRecord record = (CSVRecord) o;
+						csvPrinter.printRecord(record);
 						break;
 					default:
 						break;
