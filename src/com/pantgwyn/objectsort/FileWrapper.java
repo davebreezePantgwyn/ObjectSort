@@ -391,17 +391,18 @@ public class FileWrapper<T>
 												Comparator<T> comparator)
 	{
 
-		objQueue.parallelStream().sorted(comparator).forEachOrdered(t -> {
+		for (T t:objQueue)
+		{
 			try
 			{
-				write(t);
+				write(t) ;
 			} catch (IOException e)
 			{
 				e.printStackTrace();
 				throw new RuntimeException("IO error on streams");
 			}
-		});
-
+		}
+		
 		objQueue.clear();
 
 	}
