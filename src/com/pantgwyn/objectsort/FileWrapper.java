@@ -390,6 +390,8 @@ public class FileWrapper<T>
 	public void pushData(	List<T> objQueue,
 												Comparator<T> comparator)
 	{
+		
+		objQueue.sort(comparator);
 
 		for (T t:objQueue)
 		{
