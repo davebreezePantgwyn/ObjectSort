@@ -13,7 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Main class for performing an object sort.
+ * Abstract class for performing all sort types.
  * <p>
  * This provides a number of sort methods that may be used to sort java objects
  * that implement java.io.Serializable. The caller must provide the appropriate

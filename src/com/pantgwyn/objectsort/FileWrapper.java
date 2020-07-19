@@ -146,7 +146,6 @@ public class FileWrapper<T>
 	 * <p>
 	 * Called at the start of a file merge to ready the FileWrapper for reading.
 	 * 
-	 * @return ObjectInputStream of the FileWrapper.
 	 * @throws IOException
 	 * @throws ClassNotFoundException
 	 */
@@ -186,7 +185,6 @@ public class FileWrapper<T>
 	 * Called when a sort cannot be completed in memory. Makes the FileWrapper ready
 	 * to receive objects.
 	 * 
-	 * @return ObjectOutputStream of the FileWrapper.
 	 * @throws IOException
 	 */
 	public void startOutStream() throws IOException

@@ -1,5 +1,5 @@
 /**
- * Provides the classes necessary perform a sort
+ * Provides the classes necessary to perform a sort
  * of a set of java objects.
  * <p>
  * The sort will be either:
@@ -18,7 +18,7 @@
  * </ul>
  *
  * @author  Dave Breeze
- * @version 1.0
- * @since 1.0
+ * @version 1.0.0
+ * @since 1.0.0
  */
 package com.pantgwyn.objectsort;
